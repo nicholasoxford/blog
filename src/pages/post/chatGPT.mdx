@@ -1,0 +1,337 @@
+---
+title: chatGPT
+date: 2023-02-03
+description: Use typescript to parse a csv and generate openAI embeddings
+tag: typescript AI
+author: Nicholas Oxford
+---
+
+# LyricGPT Tutorial
+
+## Introduction
+
+[Github repo](https://github.com/nicholasoxford/lyricgpt)
+
+This tutorial will show you how to use [supabase](https://supabase.com/) and OpenAI's embbedings to search song lyrics using natural language.
+
+After looking at different vector compatabile database, it was clear that supabase was the easiest to use.
+
+This closely follows their tutorial on `Storing OpenAI embeddings in Postgres with pgvector`. (Source)[https://supabase.com/blog/openai-embeddings-postgres-vector]
+
+## Create supabase project
+
+After signing up for supabase, create your first project with default settings.
+
+<div>
+  <video width="800" height="auto" controls>
+    <source
+      src="https://videos.lyricgpt.io/createProjectSupa.mov"
+      type="video/mp4"
+    />
+  </video>
+</div>
+
+Next we need to click on the terminal icon on the left sidebar. It should say SQL editor. We are going to pass in SQL commands to our supabase datbase.
+
+The first command we are passing in is going to enable the vector extension:
+
+```sql
+create extension vector;
+```
+
+The next command creates the relevant tables for both the inputs to openai and the vector output.
+
+```sql
+create table documents (
+  id bigserial primary key,
+  content text,
+  title text,
+  artist text,
+  lyrics text,
+  embedding vector (1536)
+);
+```
+
+`match_documents` is a function that will take in a query embedding and return the most similar documents. We will use this function to search for songs.
+
+```sql
+create or replace function match_documents (
+  query_embedding vector(1536),
+  similarity_threshold float,
+  match_count int
+)
+returns table (
+  id bigint,
+  content text,
+  artist text,
+  title text,
+  similarity float
+)
+language plpgsql
+as $$
+begin
+  return query
+  select
+    documents.id,
+    documents.content,
+    documents.artist,
+    documents.title,
+    1 - (documents.embedding <=> query_embedding) as similarity
+  from documents
+  where 1 - (documents.embedding <=> query_embedding) > similarity_threshold
+  order by documents.embedding <=> query_embedding
+  limit match_count;
+end;
+$$;
+```
+
+Thinking about perfomance, lets add an index:
+
+```sql
+create index on documents
+using ivfflat (embedding vector_cosine_ops)
+with (lists = 100);
+```
+
+Now in our vercel app we are going to write a function to generate the embeddings.
+It will first parse the folder `/rawData` for filepaths and then read the csv files.
+We then batch 10 songs at a time and send them to openai to generate the embeddings.
+We also check to see if the song already exist in the database
+
+```ts filename="app/api/generateEmbeddings/routes.ts"
+import * as fs from "fs";
+import * as path from "path";
+import { parse } from "csv-parse";
+import { createClient } from "@supabase/supabase-js";
+import { Configuration, OpenAIApi } from "openai";
+
+const supabaseUrl = process.env.supabaseUrl ?? "";
+const supabaseKey = process.env.SUPABASE_KEY ?? "";
+const supabaseClient = createClient(supabaseUrl, supabaseKey);
+const configuration = new Configuration({
+  apiKey: process.env.openApiKey,
+});
+const openAi = new OpenAIApi(configuration);
+
+export async function GET() {
+  const lyricPath = await getDocuments();
+  for (let i = 0; i < lyricPath.length; i++) {
+    let allSongRows: songRow[] = [];
+    const path = lyricPath[i];
+    const fileContent = fs.readFileSync(path, { encoding: "utf-8" });
+    const parseCsv = parse(fileContent, {
+      delimiter: ",",
+      columns: headers,
+    });
+
+    await new Promise((resolve, reject) => {
+      parseCsv.on("readable", () => {
+        let record;
+        while ((record = parseCsv.read())) {
+          allSongRows.push(record);
+        }
+      });
+      parseCsv.on("error", (err) => reject(err));
+      parseCsv.on("end", () => resolve("done"));
+    });
+
+    for (let i = 0; i < allSongRows.length; i += 10) {
+      const rows = allSongRows.slice(i, i + 10);
+      const allInsertsPromises = rows.map(async (row) => {
+        const songStringObj = ` ${row.artist} ${row.title} ${row.lyrics}`;
+        const { data, error } = await supabaseClient
+          .from("documents")
+          .select("id")
+          .eq("title", row.title)
+          .eq("artist", row.artist);
+        if (error) console.log(error);
+        if (data && data.length > 0) {
+          console.log("skipping", row.title, row.artist, data);
+          return null;
+        }
+        const songString = songStringObj
+          .replace(/\n/g, " ")
+          .trim()
+          .toLowerCase();
+        const embeddingResponse = await openAi
+          .createEmbedding({
+            model: "text-embedding-ada-002",
+            input: songString,
+          })
+          .catch((err) => {
+            console.log("error", err);
+          });
+
+        if (!embeddingResponse) {
+          return null;
+        }
+        const [{ embedding }] = embeddingResponse.data.data;
+        return await supabaseClient.from("documents").insert({
+          title: row.title,
+          artist: row.artist,
+          lyrics: row.lyrics,
+          content: songString,
+          embedding,
+        });
+      });
+      await Promise.all(allInsertsPromises);
+    }
+  }
+  return new Response("ok");
+}
+
+type songRow = {
+  artist: string;
+  id: string;
+  lyrics_owner_id: string;
+  primary_artist_id: string;
+  primary_artist_name: string;
+  song_art_image_thumbnail_url: string;
+  title: string;
+  url: string;
+  pageviews: string;
+  lyrics: string;
+};
+
+const headers = [
+  "artist",
+  "id",
+  "lyrics_owner_id",
+  "primary_artist_id",
+  "primary_artist_name",
+  "song_art_image_thumbnail_url",
+  "title",
+  "url",
+  "pageviews",
+  "lyrics",
+];
+const folderPath = "./rawData/";
+async function getDocuments() {
+  // get file paths of all csv
+  const files = fs.readdirSync(folderPath); // Read the files synchronously
+  return files.filter(isCsvFile).map(toFilePath); // Extract the CSV file paths
+}
+
+function isCsvFile(file: string) {
+  return path.extname(file) === ".csv";
+}
+
+function toFilePath(file: string) {
+  return path.join(folderPath, file);
+}
+```
+
+Now that we have inserted the songs into our database, we can start writing our search function.
+
+THis function takes the user query, generates an embbeding, and search our database for the most similar.
+
+Thats it.
+
+```ts filename="app/api/searchVector/routes.ts"
+import { openAi, supabaseClient } from "@/utils";
+
+export const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+};
+
+export async function POST(req: Request) {
+  // Handle CORS
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
+
+  // Search query is passed in request payload
+  const { query } = await req.json();
+  // OpenAI recommends replacing newlines with spaces for best results
+  const input = query.replace(/\n/g, " ");
+
+  // Generate a one-time embedding for the query itself
+  const embeddingResponse = await openAi.createEmbedding({
+    model: "text-embedding-ada-002",
+    input,
+  });
+
+  const [{ embedding }] = embeddingResponse.data.data;
+
+  // Ideally for context injection, documents are chunked into
+  // smaller sections at earlier pre-processing/embedding step.
+  const { data: documents, error: err } = await supabaseClient.rpc(
+    "match_documents_new",
+    {
+      query_embedding: embedding,
+      similarity_threshold: 0.78, // Choose an appropriate threshold for your data
+      match_count: 10, // Choose the number of matches
+    }
+  );
+
+  const songs: `${string} - ${string}`[] = documents.map(
+    (x: { title: string; artist: string; content: string }) => {
+      return `${x.artist} - ${x.title}`;
+    }
+  );
+
+  //remove duplicates
+  const uniqueSongs = [...new Set(songs)];
+  console.log(uniqueSongs);
+
+  return new Response(
+    JSON.stringify({
+      query,
+      uniqueSongs,
+    }),
+    {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    }
+  );
+}
+```
+
+To make sure you have all the correct dependencies, here is my `package.json`
+
+```json
+{
+  "name": "lyricgpt",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.14.0",
+    "@types/node": "18.15.11",
+    "@types/react": "18.0.33",
+    "@types/react-dom": "18.0.11",
+    "common-tags": "^1.8.2",
+    "csv-parse": "^5.3.6",
+    "encoding": "^0.1.13",
+    "eslint": "8.37.0",
+    "eslint-config-next": "13.2.4",
+    "gpt3-tokenizer": "^1.1.5",
+    "next": "13.2.2",
+    "node-fetch": "^3.3.1",
+    "oneline": "^1.0.3",
+    "openai": "^3.2.1",
+    "react": "18.2.0",
+    "react-countup": "^6.4.2",
+    "react-dom": "18.2.0",
+    "theme-ui": "^0.15.7",
+    "typescript": "5.0.3"
+  },
+  "devDependencies": {
+    "@types/common-tags": "^1.8.1",
+    "@types/mdx": "^2.0.4",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.21",
+    "tailwindcss": "^3.3.1"
+  }
+}
+```
+
+## Conclusion
+
+It is very easy to create a lyric search engine with OpenAI and Supabase.
