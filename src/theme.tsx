@@ -74,10 +74,10 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
               <Link
                 className="w-full  sm:text-right"
                 key={index}
-                href={`/${[Object.keys(header)[0]]}`}
+                href={`${[Object.keys(header)[0]]}`}
               >
                 <div className="text-lg font-extrabold">
-                  {header[Object.keys(header)[0]]}
+                  {header[Object.keys(header)[0]] + "3"}
                 </div>
               </Link>
             ))}
@@ -87,7 +87,7 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
                 <Link
                   className="font-light  "
                   key={postIndex}
-                  href={`/${post.route}`}
+                  href={`${post.route}`}
                 >
                   {truncateString(post.title)}
                 </Link>
