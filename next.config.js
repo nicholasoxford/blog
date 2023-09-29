@@ -1,6 +1,9 @@
 const withNextra = require("nextra")({
-  theme: "nextra-theme-blog",
-  themeConfig: "./theme.config.jsx",
+  theme: "./src/theme.tsx",
 });
 
-module.exports = withNextra();
+module.exports = withNextra({
+  images: {
+    domains: ["pub-93998b4c6a7245cd94fd26c0d8c78199.r2.dev"],
+  },
+});

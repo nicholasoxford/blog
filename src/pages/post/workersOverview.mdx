@@ -1,0 +1,47 @@
+---
+title: Cloudflare Workers Overview
+date: 2023-03-10
+type: post
+description: Zero to Hero with Cloudflare Workers
+tag: cloudflare, serverless, edge
+author: Nicholas Oxford
+image: https://pub-93998b4c6a7245cd94fd26c0d8c78199.r2.dev/workerOverview.png
+---
+
+# LyricGPT Tutorial
+
+## Introducing Cloudflare Workers
+
+This tutorial will largerly follow my [Cloudflare Workers Mindmap](https://excalidraw.com/#json=ZZgKmnqPdbXtVHfqTsiOr,0ZN7WYMFSC5lOu7Bv9m7Pw)
+
+<div className="w-full flex justify-center items-center">
+
+import Image from "next/image";
+
+<Image
+  src="https://pub-93998b4c6a7245cd94fd26c0d8c78199.r2.dev/cfWorker.png"
+  alt="Photo"
+  width={600}
+  height={1125}
+  object-fit="contain"
+  priority
+  className="next-image"
+/>
+</div>
+When promopted name your project. This command also defaults to pnpm
+
+```bash
+npx create-next-app@latest --experimental-app --eslint --src-dir --import-alias --use-pnpm --typescript --tailwind
+```
+
+When promopted about app directory, response no.
+
+```bash
+Would you like to use experimental `app/` directory with this project? (No/Yes) No
+```
+
+Change directory into your project. If you named your project something other than `my-next-app` change the directory name to match.
+
+```bash
+cd my-next-app
+```

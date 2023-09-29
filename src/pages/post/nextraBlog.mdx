@@ -1,6 +1,7 @@
 ---
 title: create nextra blog
 date: 2023-02-01
+type: post
 description: Create a Next.js 13 blog with Nextra
 tag: typescript AI
 author: Nicholas Oxford
@@ -8,15 +9,28 @@ author: Nicholas Oxford
 
 # LyricGPT Tutorial
 
-## Create next 13 app
+Nextra is a great tool for building websites with Next.js and MDX.
 
-When promopted name your project. This command also defaults to pnpm
+However, I find using their templates to be a bit convulated. When I decided to create
+a theme from scratch, it quickly revelaed how awesome Nextra is. Plus, when / if you go back to
+using a template, you feel like you have nextra super powers.
+
+In the tutorial we are going to walk through creating a Next.js 13 blog with Nextra.
+We will go over both `_meta.json` and inline metadata and how it builds your navigation.
+
+Lastly we will use tailwind and a `src/theme.tsx` file to customize the look and feel of our blog.
+
+## Create a next 13 app
+
+When promopted name your project. This command also defaults your next app to `pnpm` and `typescript`.
 
 ```bash
-npx create-next-app@latest --experimental-app --eslint --src-dir --import-alias --use-pnpm --typescript --tailwind
+npx create-next-app@latest --eslint --src-dir --import-alias --use-pnpm --typescript --tailwind
 ```
 
 When promopted about app directory, response no.
+
+> You cannot use Nextra with the experimental app directory.
 
 ```bash
 Would you like to use experimental `app/` directory with this project? (No/Yes) No
@@ -26,4 +40,24 @@ Change directory into your project. If you named your project something other th
 
 ```bash
 cd my-next-app
+pnpm i nextra
 ```
+
+I think a key to success could be a mix of frontMatter for the post, and `_meta.json` for the parent level navigation.
+
+### frontMatter
+
+Frontmatter is a way to identify metadata in Markdown files. Metadata can literally be anything you want it to be, but often it's used for data elements your page needs and you don't want to show directly.
+https://daily-dev-tips.com/posts/what-exactly-is-frontmatter/
+
+We are going to use frontMatter in our individual post
+
+### \_meta.json
+
+In nextra, another way to define routes and metadata is to use a `_meta.json` file. This file is used to define the routes and metadata for the parent level of the directory. This is great for defining the navigation of your site.
+
+## Routing
+
+When working with a nextra theme, the ability to create a post and it automatically appear in the navigation bar can feel like magic. When a post doesn't appear and you have zero reason why, nextra starts to feel more like a dark art.
+
+The nextra docs are in progress, and specifcally when working with a theme, I have found them difficult to draw direct answers from. Writing documentation is extremely hard, and this seems to be the love child of the wonderful [Shu Ding](https://github.com/shuding), so I felt lucky to have the few resources I did. Hopefully I can turn some of this article into a PR helping explaining routing.
