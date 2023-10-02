@@ -14,6 +14,7 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
     route: string;
   }[] = [];
   let type = "";
+  console.log("pageMap: ", pageMap);
   for (let i = 0; i < pageMap.length; i++) {
     const page = pageMap[i];
     if (page.kind === "Meta") {
@@ -28,7 +29,11 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
         const post = page.children[j];
 
         if (post.kind === "MdxPage" && post.frontMatter) {
-          if (post.frontMatter.title && post.name !== "index") {
+          if (
+            post.frontMatter.title &&
+            post.name !== "index" &&
+            post.name != "about"
+          ) {
             tenMostRecentPosts.push({
               title: post.frontMatter.title,
               route: post.route,
@@ -77,7 +82,7 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
                 href={`${[Object.keys(header)[0]]}`}
               >
                 <div className="text-lg font-extrabold">
-                  {header[Object.keys(header)[0]] + "3"}
+                  {header[Object.keys(header)[0]]}
                 </div>
               </Link>
             ))}
