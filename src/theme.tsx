@@ -14,7 +14,6 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
     route: string;
   }[] = [];
   let type = "";
-  console.log("pageMap: ", pageMap);
   for (let i = 0; i < pageMap.length; i++) {
     const page = pageMap[i];
     if (page.kind === "Meta") {
@@ -46,12 +45,6 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
   if (frontMatter && frontMatter.type) {
     type = frontMatter.type;
   }
-  console.log("title: ", title);
-  console.log("frontMatter: ", frontMatter);
-  console.log("headings: ", headings);
-  console.log("pageMap: ", pageMap);
-  console.log("TYPE: ", type);
-  console.log("HEADERS: ", headers);
 
   return (
     <div>

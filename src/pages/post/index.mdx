@@ -4,4 +4,36 @@ title: Posts
 date: 2021-03-18
 ---
 
-Hello there
+import { useData } from 'nextra/data'
+import { useState } from 'react'
+
+export const getStaticProps = ({ params }) => {
+
+return fetch(`https://api.github.com/repos/shuding/nextra`)
+.then((res) => res.json())
+.then((repo) => ({
+props: {
+// We add an `ssg` field to the page props,
+// which will be provided to the Nextra `useData` hook.
+ssg: {
+stars: repo.stargazers_count,
+},
+},
+// The page will be considered as stale and regenerated every 60 seconds.
+revalidate: 60,
+}));
+};
+
+export function Stars({ children }) {
+  const { stars } = useData();
+  console.log("stars", stars);
+  const [count, setCount] = useState(stars);
+  return (
+    <button onClick={() => setCount(count + 1)}>
+      {children}
+      {count}
+    </button>
+  );
+}
+
+Nextra has <Stars /> stars on GitHub!
