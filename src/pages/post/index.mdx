@@ -9,7 +9,7 @@ import { useState } from 'react'
 
 export const getStaticProps = ({ params }) => {
 
-return fetch(`https://api.github.com/repos/shuding/nextra`)
+return fetch(`https://api.github.com/repos/nicholasoxford/SupaFly`)
 .then((res) => res.json())
 .then((repo) => ({
 props: {
@@ -26,7 +26,7 @@ revalidate: 60,
 
 export function Stars({ children }) {
   const { stars } = useData();
-  console.log("stars", stars);
+
   const [count, setCount] = useState(stars);
   return (
     <button onClick={() => setCount(count + 1)}>
@@ -36,4 +36,4 @@ export function Stars({ children }) {
   );
 }
 
-Nextra has <Stars /> stars on GitHub!
+Supafly has <Stars /> stars on GitHub!

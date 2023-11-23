@@ -65,7 +65,7 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
         <meta name="twitter:image" content={frontMatter.image} />
       </Head>
       <div className="flex sm:flex-row flex-col justify-center w-full sm:space-x-4  ">
-        <div className="sm:w-1/4 w-full h-screen flex flex-col justify-center align-middle sm:text-right">
+        <div className="sm:w-1/4 w-full sm:h-screen sm:flex sm:flex-col justify-center align-middle sm:text-right">
           <h1 className="w-full mt-2 sm:mt-8">Nicholas Oxford</h1>
           <div className="flex sm:flex-col justify-start items-start sm:items-center w-full px-4 sm:px-0 overflow-auto">
             {headers.map((header, index) => (
