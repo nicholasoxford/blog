@@ -44,7 +44,9 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
   if (frontMatter && frontMatter.type) {
     pageType = frontMatter.type;
   }
-
+  console.log({
+    title,
+  });
   return (
     <div>
       <Head>
