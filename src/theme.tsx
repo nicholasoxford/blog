@@ -48,9 +48,11 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
   return (
     <div>
       <Head>
-        <title>{title}</title>
-        <meta name="og:image" content={frontMatter.image} />
-        <meta name="og:title" content={title} />
+        {!!title && <title>{title}</title>}
+        {!!frontMatter.image && (
+          <meta name="og:image" content={frontMatter.image} />
+        )}
+        {!!title && <meta name="og:title" content={title} />}
         <meta name="og:description" content={frontMatter.description} />
         <meta name="og:url" content="https://nicholasoxford.com" />
         <meta name="og:site_name" content="Nicholas Oxford" />
@@ -61,7 +63,9 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
         <meta name="twitter:creator" content="@ApolloToday" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={frontMatter.description} />
-        <meta name="twitter:image" content={frontMatter.image} />
+        {frontMatter.image && (
+          <meta name="twitter:image" content={frontMatter.image} />
+        )}
       </Head>
       <div className="flex sm:flex-row flex-col justify-center w-full sm:space-x-4  ">
         <div className="sm:w-1/4 w-full sm:h-screen sm:flex sm:flex-col justify-center align-middle sm:text-right">
