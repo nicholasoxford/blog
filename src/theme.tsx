@@ -100,7 +100,7 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
         </div>
         <div className="sm:w-3/4 w-full mt-5 sm:mt-10 ">
           <div className="container overflow-scroll max-w-4xl ">
-            {title && route != "/" && (
+            {title && (
               <div>
                 <h1 className="text-4xl font-bold mb-8 ">{title}</h1>
               </div>
