@@ -5,7 +5,6 @@ import Link from "next/link";
 const MAX_SIDEBAR_LENGTH = 40;
 export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
   const { title, frontMatter, headings, pageMap, route } = pageOpts;
-  console.log({ pageOpts });
   let headers: {
     [key: string]: string;
   }[] = [];
