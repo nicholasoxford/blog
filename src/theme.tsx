@@ -4,8 +4,7 @@ import Link from "next/link";
 
 const MAX_SIDEBAR_LENGTH = 40;
 export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
-  const { title, frontMatter, headings, pageMap } = pageOpts;
-
+  const { title, frontMatter, headings, pageMap, route } = pageOpts;
   let headers: {
     [key: string]: string;
   }[] = [];
@@ -93,7 +92,7 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
             </div>
           </div>
         </div>
-        <div className="sm:w-3/4 w-full mt-5 sm:mt-20 ">
+        <div className="sm:w-3/4 w-full mt-5 sm:mt-10 ">
           {type === "posts" ? (
             <div>
               <div className="">{children}</div>
@@ -101,6 +100,11 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
             </div>
           ) : (
             <div className="container overflow-scroll max-w-4xl ">
+              {title && route.includes("/post/") && (
+                <div>
+                  <h1 className="text-4xl font-bold mb-8 ">{title}</h1>
+                </div>
+              )}
               {children}
             </div>
           )}
