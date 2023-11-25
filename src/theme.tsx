@@ -12,7 +12,7 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
     title: string;
     route: string;
   }[] = [];
-  let type = "";
+  let pageType = "";
   for (let i = 0; i < pageMap.length; i++) {
     const page = pageMap[i];
     if (page.kind === "Meta") {
@@ -42,7 +42,7 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
     }
   }
   if (frontMatter && frontMatter.type) {
-    type = frontMatter.type;
+    pageType = frontMatter.type;
   }
 
   return (
@@ -93,21 +93,14 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
           </div>
         </div>
         <div className="sm:w-3/4 w-full mt-5 sm:mt-10 ">
-          {type === "posts" ? (
-            <div>
-              <div className="">{children}</div>
-              <div>POSTS</div>
-            </div>
-          ) : (
-            <div className="container overflow-scroll max-w-4xl ">
-              {title && route.includes("/post/") && (
-                <div>
-                  <h1 className="text-4xl font-bold mb-8 ">{title}</h1>
-                </div>
-              )}
-              {children}
-            </div>
-          )}
+          <div className="container overflow-scroll max-w-4xl ">
+            {title && route != "/" && (
+              <div>
+                <h1 className="text-4xl font-bold mb-8 ">{title}</h1>
+              </div>
+            )}
+            {children}
+          </div>
         </div>
       </div>
     </div>
