@@ -36,14 +36,11 @@ export function getStaticProps(props) {
 }
 
 export function Posts() {
-  const propsHere = useData()
-  console.log({ propsHere })
+  const { posts } = useData()
   // Formatting options
-  const { posts } = propsHere
   const options = { year: 'numeric', month: 'short', day: 'numeric' };
   return (
     <div>
-      <h1>Posts</h1>
       <ul>
         {posts.map((post) => (
           <li key={post.title}>
