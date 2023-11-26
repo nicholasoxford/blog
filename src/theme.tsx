@@ -75,13 +75,11 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
           <div className="flex sm:flex-col justify-start items-start sm:items-center w-full px-4 sm:px-0 overflow-auto">
             {headers.map((header, index) => (
               <Link
-                className="w-full  sm:text-right"
+                className="w-full  sm:text-right text-lg font-extrabold"
                 key={index}
                 href={`${[Object.keys(header)[0]]}`}
               >
-                <div className="text-lg font-extrabold">
-                  {header[Object.keys(header)[0]]}
-                </div>
+                {header[Object.keys(header)[0]]}
               </Link>
             ))}
             <div className="hidden sm:flex flex-col w-full items-end">
