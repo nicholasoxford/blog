@@ -9,7 +9,7 @@ export const extractHeaders = (page: any): Header[] =>
     : []
 
 export const extractPosts = (page: any): Post[] =>
-  page.kind === 'Folder' && page.name === 'post'
+  page.kind === 'Folder' && page.name === 'posts'
     ? page.children
         .filter((child: any) => child.kind === 'MdxPage' && child.frontMatter)
         .filter(
