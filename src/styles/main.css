@@ -80,6 +80,7 @@ a:hover,
 
 .prose a:hover,
 .nav-line .nav-link:hover {
+
   /* Change color to gray on hover */
   transition: color 0.3s ease;
   text-decoration: underline;
