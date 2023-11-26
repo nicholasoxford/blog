@@ -1,92 +1,55 @@
-import type { NextraThemeLayoutProps } from "nextra";
-import Head from "next/head";
-import Link from "next/link";
-
-const MAX_SIDEBAR_LENGTH = 40;
+import type { NextraThemeLayoutProps } from 'nextra'
+import Head from 'next/head'
+import Link from 'next/link'
+import { processPageMap } from './utils/index'
+const MAX_SIDEBAR_LENGTH = 40
 export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
-  const { title, frontMatter, headings, pageMap, route } = pageOpts;
-  let headers: {
-    [key: string]: string;
-  }[] = [];
-  let tenMostRecentPosts: {
-    title: string;
-    route: string;
-  }[] = [];
-  let pageType = "";
-  for (let i = 0; i < pageMap.length; i++) {
-    const page = pageMap[i];
-    if (page.kind === "Meta") {
-      Object.entries(page.data).forEach(([key, value]) => {
-        if (key !== "index") {
-          headers.push({ [key]: value.toString() });
-        }
-      });
-    }
-    if (page.kind === "Folder" && page.name === "post") {
-      for (let j = 0; j < page.children.length; j++) {
-        const post = page.children[j];
+  const { title, frontMatter, pageMap } = pageOpts
 
-        if (post.kind === "MdxPage" && post.frontMatter) {
-          if (
-            post.frontMatter.title &&
-            post.name !== "index" &&
-            post.name != "about"
-          ) {
-            tenMostRecentPosts.push({
-              title: post.frontMatter.title,
-              route: post.route,
-            });
-          }
-        }
-      }
-    }
-  }
-  if (frontMatter && frontMatter.type) {
-    pageType = frontMatter.type;
-  }
+  const [headers, tenMostRecentPosts] = processPageMap(pageMap)
 
   return (
     <div>
       <Head>
         {!!title && <title>{title}</title>}
         {!!frontMatter.image && (
-          <meta name="og:image" content={frontMatter.image} />
+          <meta name='og:image' content={frontMatter.image} />
         )}
-        {!!title && <meta name="og:title" content={title} />}
-        <meta name="og:description" content={frontMatter.description} />
-        <meta name="og:url" content="https://nicholasoxford.com" />
-        <meta name="og:site_name" content="Nicholas Oxford" />
-        <meta name="og:type" content="website" />
-        <meta name="og:locale" content="en_US" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@ApolloToday" />
-        <meta name="twitter:creator" content="@ApolloToday" />
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:description" content={frontMatter.description} />
+        {!!title && <meta name='og:title' content={title} />}
+        <meta name='og:description' content={frontMatter.description} />
+        <meta name='og:url' content='https://nicholasoxford.com' />
+        <meta name='og:site_name' content='Nicholas Oxford' />
+        <meta name='og:type' content='website' />
+        <meta name='og:locale' content='en_US' />
+        <meta name='twitter:card' content='summary_large_image' />
+        <meta name='twitter:site' content='@ApolloToday' />
+        <meta name='twitter:creator' content='@ApolloToday' />
+        <meta name='twitter:title' content={title} />
+        <meta name='twitter:description' content={frontMatter.description} />
         {frontMatter.image && (
-          <meta name="twitter:image" content={frontMatter.image} />
+          <meta name='twitter:image' content={frontMatter.image} />
         )}
       </Head>
-      <div className="flex sm:flex-row flex-col justify-center w-full sm:space-x-4  ">
-        <div className="sm:w-1/4 w-full flex-row sm:h-screen sm:flex sm:flex-col justify-center align-middle sm:text-right">
-          <h1 className="mt-2 sm:mt-8">
-            <Link href="/">Nicholas Oxford</Link>
+      <div className=' flex w-full flex-col justify-center sm:flex-row sm:space-x-4  '>
+        <div className='w-full flex-row justify-center align-middle sm:flex sm:h-screen sm:w-1/4 sm:flex-col sm:text-right'>
+          <h1 className='mt-2 sm:mt-8'>
+            <Link href='/'>Nicholas Oxford</Link>
           </h1>
-          <div className="flex sm:flex-col justify-start items-start sm:items-center w-full px-0 overflow-auto">
+          <div className='flex w-full items-start justify-start overflow-auto px-0 sm:flex-col sm:items-center'>
             {headers.map((header, index) => (
               <Link
-                className="w-full  sm:text-right text-lg font-extrabold"
+                className='w-full  text-lg font-extrabold sm:text-right'
                 key={index}
                 href={`${[Object.keys(header)[0]]}`}
               >
                 {header[Object.keys(header)[0]]}
               </Link>
             ))}
-            <div className="hidden sm:flex flex-col w-full items-end">
-              <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700 w-48 " />
+            <div className='hidden w-full flex-col items-end sm:flex'>
+              <hr className='my-2 h-px w-48 border-0 bg-gray-200 dark:bg-gray-700 ' />
               {tenMostRecentPosts.map((post, postIndex) => (
                 <Link
-                  className="font-light  "
+                  className='font-light  '
                   key={postIndex}
                   href={`${post.route}`}
                 >
@@ -96,11 +59,11 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
             </div>
           </div>
         </div>
-        <div className="sm:w-3/4 w-full mt-5 sm:mt-10 ">
-          <div className="container overflow-scroll max-w-4xl ">
+        <div className='mt-5 w-full sm:mt-10 sm:w-3/4 '>
+          <div className='container max-w-4xl overflow-scroll '>
             {title && (
               <div>
-                <h1 className="text-4xl font-bold mb-8 ">{title}</h1>
+                <h1 className='mb-8 text-4xl font-bold '>{title}</h1>
               </div>
             )}
             {children}
@@ -108,11 +71,11 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function truncateString(str: string): string {
   return str.length > MAX_SIDEBAR_LENGTH
-    ? str.substring(0, MAX_SIDEBAR_LENGTH - 3) + "..."
-    : str;
+    ? str.substring(0, MAX_SIDEBAR_LENGTH - 3) + '...'
+    : str
 }
