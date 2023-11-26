@@ -4,6 +4,61 @@ title: Posts
 date: 2021-03-18
 ---
 
+import fs from 'fs'
+import grayMatter from 'gray-matter'
+import { useData } from 'nextra/data'
+
+export function getStaticProps(props) {
+  // read files in current directory
+  const posts = fs.readdirSync('./src/pages/posts')
+    .filter((fn) => fn.endsWith('.mdx'))
+    .filter((fn) => !fn.startsWith('index'))
+    .map((fn) => fn.slice(0, -4))
+    .map((fn) => {
+      const path = `./src/pages/posts/${fn}.mdx`
+      const file = fs.readFileSync(path, 'utf8')
+      const { data } = grayMatter(file)
+      return {
+        ...data,
+        date: new Date(data.date).toISOString(),
+        slug: fn,
+      }
+    })
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+
+  return {
+    props: {
+      ssg: {
+        posts,
+      },
+    }
+  }
+}
+
+export function Posts() {
+  const propsHere = useData()
+  console.log({ propsHere })
+  // Formatting options
+  const { posts } = propsHere
+  const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  return (
+    <div>
+      <h1>Posts</h1>
+      <ul>
+        {posts.map((post) => (
+          <li key={post.title}>
+            <a href={`/posts/${post.slug}`}><strong>{post.title}</strong> - {new Date(post.date).toLocaleDateString('en-US', options)}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+    <Posts /> 
+
+
+
 - **[Minting a tree for compressed NFTs](https://dev.to/apollotoday/minting-a-tree-for-compressed-nfts-13n7)** - Mar 23, 2023
 
 - **[Using Python to track NFT prices on FTX](https://dev.to/apollotoday/using-python-to-track-nft-prices-on-ftx-1h3n)** - Nov 1, 2021
@@ -37,7 +92,3 @@ date: 2021-03-18
 - **[Using Github’s CLI to make onboarding Devs easier](https://medium.com/@nicholasoxford/using-githubs-cli-to-make-onboarding-devs-easier-%EF%B8%8F-12581c34a87b)** - Aug 31, 2021
 
 - **[Mapping Atlanta Crime Data — Python Data Visualization Tutorial](https://medium.com/@nicholasoxford/learning-python-mapping-atl-crime-data-935d2406265b)** - Aug 29, 2021
-
-
-
-

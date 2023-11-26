@@ -4,10 +4,51 @@ import Link from 'next/link'
 import { processPageMap } from './utils/index'
 const MAX_SIDEBAR_LENGTH = 40
 export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
-  const { title, frontMatter, pageMap } = pageOpts
+  const { title, frontMatter, headings, pageMap, route } = pageOpts
 
-  const [headers, tenMostRecentPosts] = processPageMap(pageMap)
+  let headers: {
+    [key: string]: string
+  }[] = []
+  let tenMostRecentPosts: {
+    title: string
+    route: string
+  }[] = []
+  let pageType = ''
+  for (let i = 0; i < pageMap.length; i++) {
+    const page = pageMap[i]
+    if (page.kind === 'Meta') {
+      Object.entries(page.data).forEach(([key, value]) => {
+        if (key !== 'index') {
+          headers.push({ [key]: value.toString() })
+        }
+      })
+    }
+    if (page.kind === 'Folder' && page.name === 'posts') {
+      for (let j = 0; j < page.children.length; j++) {
+        const post = page.children[j]
 
+        if (post.kind === 'MdxPage' && post.frontMatter) {
+          if (
+            post.frontMatter.title &&
+            post.name !== 'index' &&
+            post.name != 'about'
+          ) {
+            tenMostRecentPosts.push({
+              title: post.frontMatter.title,
+              route: post.route,
+            })
+          }
+        }
+      }
+    }
+  }
+  if (frontMatter && frontMatter.type) {
+    pageType = frontMatter.type
+  }
+  console.log({
+    headers,
+    tenMostRecentPosts,
+  })
   return (
     <div>
       <Head>

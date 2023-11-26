@@ -12,6 +12,7 @@
     "autoprefixer": "10.4.14",
     "eslint": "8.38.0",
     "eslint-config-next": "13.5.3",
+    "gray-matter": "^4.0.3",
     "next": "^13.5.3",
     "nextra": "^2.13.1",
     "nextra-theme-blog": "^2.13.1",
