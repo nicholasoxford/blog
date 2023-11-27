@@ -15,7 +15,7 @@ This tutorial will show you how to use [supabase](https://supabase.com/) and Ope
 
 After looking at different vector compatabile database, it was clear that supabase was the easiest to use.
 
-This closely Supbase's tutorial: [`Storing OpenAI embeddings in Postgres with pgvector`](https://supabase.com/blog/openai-embeddings-postgres-vector). 
+This closely follows Supbase's tutorial: [`Storing OpenAI embeddings in Postgres with pgvector`](https://supabase.com/blog/openai-embeddings-postgres-vector). 
     <br />  
 
 
@@ -38,13 +38,13 @@ Next we need to click on the terminal icon on the left sidebar. It should say SQ
     <br />  
 The first command we are passing in is going to enable the vector extension:
 
-```sql
+```sql 
 create extension vector;
 ```
     <br />
 The next command creates the relevant tables for both the inputs to openai and the vector output.
 
-```sql
+```sql 
 create table documents (
   id bigserial primary key,
   content text,
@@ -97,6 +97,7 @@ create index on documents
 using ivfflat (embedding vector_cosine_ops)
 with (lists = 100);
 ```
+      <br />
 
 Now in our vercel app we are going to write a function to generate the embeddings.
 It will first parse the folder `/rawData` for filepaths and then read the csv files.
@@ -226,6 +227,8 @@ function toFilePath(file: string) {
 }
 ```
 
+    <br />
+
 Now that we have inserted the songs into our database, we can start writing our search function.
 
 THis function takes the user query, generates an embbeding, and search our database for the most similar.
@@ -292,6 +295,7 @@ export async function POST(req: Request) {
   );
 }
 ```
+      <br />
 
 To make sure you have all the correct dependencies, here is my `package.json`
 

@@ -1,9 +1,12 @@
+const { readFileSync } = require('fs')
 const withNextra = require('nextra')({
   theme: './src/theme.tsx',
   mdxOptions: {
     rehypePrettyCodeOptions: {
       // VSCode theme or built-in Shiki theme, see Shiki documentation for more information
-      theme: 'github-light',
+      theme: JSON.parse(
+        readFileSync('./public/syntax/moonlight-ii.json', 'utf8')
+      ),
     },
   },
 })
