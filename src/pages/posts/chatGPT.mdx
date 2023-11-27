@@ -6,38 +6,42 @@ description: Use typescript to parse a csv and generate openAI embeddings
 tag: typescript AI
 author: Nicholas Oxford
 ---
+    <ins>[Github repo](https://github.com/nicholasoxford/lyricgpt)</ins>
+    <br />  
 
 ## Introduction
-
-[Github repo](https://github.com/nicholasoxford/lyricgpt)
 
 This tutorial will show you how to use [supabase](https://supabase.com/) and OpenAI's embbedings to search song lyrics using natural language.
 
 After looking at different vector compatabile database, it was clear that supabase was the easiest to use.
 
-This closely follows their tutorial on `Storing OpenAI embeddings in Postgres with pgvector`. (Source)[https://supabase.com/blog/openai-embeddings-postgres-vector]
+This closely Supbase's tutorial: [`Storing OpenAI embeddings in Postgres with pgvector`](https://supabase.com/blog/openai-embeddings-postgres-vector). 
+    <br />  
+
 
 ## Create supabase project
 
 After signing up for supabase, create your first project with default settings.
 
-<div>
-  <video width="800" height="auto" controls>
-    <source
-      src="https://videos.lyricgpt.io/createProjectSupa.mov"
-      type="video/mp4"
-    />
-  </video>
-</div>
+    <div>
+          <video width="800" height="auto" controls>
+              <source
+                  src="https://videos.lyricgpt.io/createProjectSupa.mov"
+                  type="video/mp4"
+                />
+              </video>
+          </div>
+    <br />  
+
 
 Next we need to click on the terminal icon on the left sidebar. It should say SQL editor. We are going to pass in SQL commands to our supabase datbase.
-
+    <br />  
 The first command we are passing in is going to enable the vector extension:
 
 ```sql
 create extension vector;
 ```
-
+    <br />
 The next command creates the relevant tables for both the inputs to openai and the vector output.
 
 ```sql
@@ -50,7 +54,7 @@ create table documents (
   embedding vector (1536)
 );
 ```
-
+    <br />
 `match_documents` is a function that will take in a query embedding and return the most similar documents. We will use this function to search for songs.
 
 ```sql
@@ -83,6 +87,8 @@ begin
 end;
 $$;
 ```
+
+    <br />
 
 Thinking about perfomance, lets add an index:
 

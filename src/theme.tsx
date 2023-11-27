@@ -32,9 +32,16 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
       </Head>
       <div className=' flex w-full flex-col justify-center sm:flex-row sm:space-x-4  '>
         <div className='w-full flex-row justify-center align-middle sm:flex sm:h-screen sm:w-1/4 sm:flex-col sm:text-right'>
-          <h1 className='mt-2 sm:mt-8'>
-            <Link href='/'>Nicholas Oxford</Link>
-          </h1>
+          <div className='mt-2 text-lg  sm:mt-8'>
+            <Link
+              href='/'
+              style={{
+                fontVariationSettings: ` 'wght' 850`,
+              }}
+            >
+              Nicholas Oxford
+            </Link>
+          </div>
           <div className='flex w-full items-start justify-start overflow-auto px-0 sm:flex-col sm:items-center'>
             {headers.map((header, index) => (
               <Link
