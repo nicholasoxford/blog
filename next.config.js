@@ -1,5 +1,11 @@
 const withNextra = require('nextra')({
   theme: './src/theme.tsx',
+  mdxOptions: {
+    rehypePrettyCodeOptions: {
+      // VSCode theme or built-in Shiki theme, see Shiki documentation for more information
+      theme: 'github-light',
+    },
+  },
 })
 
 module.exports = withNextra({
