@@ -8,7 +8,7 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
   const [headers, tenMostRecentPosts] = processPageMap(pageMap)
   const image =
     frontMatter.image ??
-    'https://www.wilsonpeakproperties.com/custimages/Big_Sky_Resort_Winter.jpeg'
+    'https://assets.nicholasoxford.com/Big_Sky_Resort_Winter.webp'
   const description = frontMatter.description ?? 'Software. Be happy '
 
   const backgroundStyle = {
