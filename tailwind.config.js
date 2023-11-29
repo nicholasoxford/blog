@@ -17,6 +17,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontWeight: {
+        normal: 500, // Adjust this value as needed
+      },
       typography: {
         DEFAULT: {
           css: {

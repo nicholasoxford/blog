@@ -4,12 +4,20 @@ import Link from 'next/link'
 import { processPageMap } from './utils/index'
 const MAX_SIDEBAR_LENGTH = 40
 export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
-  const { title, frontMatter, pageMap } = pageOpts
+  const { title, frontMatter, pageMap, route } = pageOpts
   const [headers, tenMostRecentPosts] = processPageMap(pageMap)
   const image =
     frontMatter.image ??
     'https://www.wilsonpeakproperties.com/custimages/Big_Sky_Resort_Winter.jpeg'
   const description = frontMatter.description ?? 'Software. Be happy '
+
+  const backgroundStyle = {
+    backgroundImage: route.includes('/posts/') ? `url(${image})` : '',
+    backgroundPosition: 'center',
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+  }
+
   return (
     <div>
       <Head>
@@ -65,12 +73,22 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
             </div>
           </div>
         </div>
-        <div className='mt-5 w-full sm:mt-10 sm:w-3/4 '>
+        <div className='w-full sm:w-3/4 '>
           <div className='container max-w-4xl overflow-scroll '>
             {title && (
-              <div>
-                <h1 className='mb-8 text-4xl font-bold '>{title}</h1>
-              </div>
+              <>
+                <div
+                  className='custom-background my-2 hidden h-32 items-center justify-start rounded-md sm:flex'
+                  style={backgroundStyle}
+                >
+                  <div className='overlay'></div>{' '}
+                  {/* Overlay for reduced opacity */}
+                  <h1 className='text-4xl font-bold text-black '>{title}</h1>
+                </div>
+                <div>
+                  <h1 className='mb-8 text-4xl font-bold sm:hidden'>{title}</h1>
+                </div>
+              </>
             )}
             {children}
           </div>
