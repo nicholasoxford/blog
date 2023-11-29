@@ -108,7 +108,7 @@ pre {
 }
 
 code {
-  @apply !text-sm md:!text-base !leading-loose md:!leading-loose;
+  @apply !text-sm md:!text-base !leading-loose md:!leading-loose overflow-auto ml-3 mt-2;
 }
 
 pre > code {
