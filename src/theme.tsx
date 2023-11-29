@@ -5,30 +5,29 @@ import { processPageMap } from './utils/index'
 const MAX_SIDEBAR_LENGTH = 40
 export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
   const { title, frontMatter, pageMap } = pageOpts
-
   const [headers, tenMostRecentPosts] = processPageMap(pageMap)
-
+  const image =
+    frontMatter.image ??
+    'https://www.wilsonpeakproperties.com/custimages/Big_Sky_Resort_Winter.jpeg'
+  const description = frontMatter.description ?? 'Software. Be happy '
   return (
     <div>
       <Head>
-        {!!title && <title>{title}</title>}
-        {!!frontMatter.image && (
-          <meta name='og:image' content={frontMatter.image} />
-        )}
-        {!!title && <meta name='og:title' content={title} />}
-        <meta name='og:description' content={frontMatter.description} />
+        {<title>{title ?? 'Nicholas Oxford'}</title>}
+        {<meta name='og:image' content={image} />}
+        {<meta name='og:title' content={title} />}
+        <meta name='og:description' content={description} />
         <meta name='og:url' content='https://nicholasoxford.com' />
         <meta name='og:site_name' content='Nicholas Oxford' />
+        <meta name='twitter:image' content={image} />
         <meta name='og:type' content='website' />
         <meta name='og:locale' content='en_US' />
         <meta name='twitter:card' content='summary_large_image' />
         <meta name='twitter:site' content='@ApolloToday' />
         <meta name='twitter:creator' content='@ApolloToday' />
         <meta name='twitter:title' content={title} />
-        <meta name='twitter:description' content={frontMatter.description} />
-        {frontMatter.image && (
-          <meta name='twitter:image' content={frontMatter.image} />
-        )}
+        <meta name='twitter:description' content={description} />
+        {<meta name='twitter:image' content={image} />}
       </Head>
       <div className=' flex w-full flex-col justify-center sm:flex-row sm:space-x-4  '>
         <div className='w-full flex-row justify-center align-middle sm:flex sm:h-screen sm:w-1/4 sm:flex-col sm:text-right'>

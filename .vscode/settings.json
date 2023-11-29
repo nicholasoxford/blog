@@ -7,5 +7,7 @@
   "eslint.validate": ["javascript"],
   "[mdx]": {
     "editor.defaultFormatter": "unifiedjs.vscode-mdx"
-  }
+  },
+  "workbench.preferredDarkColorTheme": "Palenight (Mild Contrast)",
+  "workbench.colorTheme": "Palenight Italic"
 }
