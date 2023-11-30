@@ -6,6 +6,7 @@ const MAX_SIDEBAR_LENGTH = 40
 export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
   const { title, frontMatter, pageMap, route } = pageOpts
   const [headers, tenMostRecentPosts] = processPageMap(pageMap)
+
   const image =
     frontMatter.image ??
     'https://assets.nicholasoxford.com/Big_Sky_Resort_Winter.webp'
