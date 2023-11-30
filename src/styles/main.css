@@ -122,7 +122,7 @@ pre > code {
 }
 
 .prose {
-  @apply max-w-[55rem] sm:text-lg md:text-xl !leading-7 sm:!leading-9;
+  @apply max-w-[55rem] md:text-lg md:text-xl !leading-7 md:!leading-9;
 }
 
 [data-line] {

@@ -38,9 +38,9 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
         <meta name='twitter:description' content={description} />
         {<meta name='twitter:image' content={image} />}
       </Head>
-      <div className=' flex w-full flex-col justify-center sm:flex-row sm:space-x-4  '>
-        <div className='w-full flex-row justify-center align-middle sm:flex sm:h-screen sm:w-1/4 sm:flex-col sm:text-right'>
-          <div className='mt-2 text-lg  sm:mt-8'>
+      <div className=' flex w-full flex-col justify-center md:flex-row md:space-x-4  '>
+        <div className='w-full flex-row justify-center align-middle md:flex md:h-screen md:w-1/4 md:flex-col md:text-right'>
+          <div className='mt-2 text-lg  md:mt-8'>
             <Link
               href='/'
               style={{
@@ -50,17 +50,17 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
               Nicholas Oxford
             </Link>
           </div>
-          <div className='flex w-full items-start justify-start overflow-auto px-0 sm:flex-col sm:items-center'>
+          <div className='flex w-full items-start justify-start overflow-auto px-0 md:flex-col md:items-center'>
             {headers.map((header, index) => (
               <Link
-                className='w-full  text-lg font-extrabold sm:text-right'
+                className='w-full  text-lg font-extrabold md:text-right'
                 key={index}
                 href={`${[Object.keys(header)[0]]}`}
               >
                 {header[Object.keys(header)[0]]}
               </Link>
             ))}
-            <div className='hidden w-full flex-col items-end sm:flex'>
+            <div className='hidden w-full flex-col items-end md:flex'>
               <hr className='my-2 h-px w-48 border-0 bg-gray-200 dark:bg-gray-700 ' />
               {tenMostRecentPosts.map((post, postIndex) => (
                 <Link
@@ -74,12 +74,12 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
             </div>
           </div>
         </div>
-        <div className='w-full sm:w-3/4 '>
+        <div className='w-full md:w-3/4 '>
           <div className='container max-w-4xl overflow-scroll '>
             {title && (
               <>
                 <div
-                  className='custom-background my-2 hidden h-32 items-center justify-start rounded-md sm:flex'
+                  className='custom-background my-2 hidden h-32 items-center justify-start rounded-md md:flex'
                   style={backgroundStyle}
                 >
                   <div className='overlay'></div>{' '}
@@ -87,7 +87,7 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
                   <h1 className='text-4xl font-bold text-black '>{title}</h1>
                 </div>
                 <div>
-                  <h1 className='mb-8 text-4xl font-bold sm:hidden'>{title}</h1>
+                  <h1 className='mb-8 text-4xl font-bold md:hidden'>{title}</h1>
                 </div>
               </>
             )}
