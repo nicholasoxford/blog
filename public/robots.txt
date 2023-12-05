@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://nicholasoxford.com
+
+# Sitemaps
+Sitemap: https://nicholasoxford.com/sitemap.xml
