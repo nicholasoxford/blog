@@ -6,8 +6,7 @@ const MAX_SIDEBAR_LENGTH = 40
 export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
   let { title, frontMatter, pageMap, route } = pageOpts
   const [headers, tenMostRecentPosts] = processPageMap(pageMap)
-
-  title = title === 'Index' ? 'Software. Be happy' : title
+  let isIndex = route === '/'
 
   const image =
     frontMatter.image ??
@@ -24,7 +23,12 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
   return (
     <div>
       <Head>
-        {<title>{title ?? 'Nicholas Oxford'}</title>}
+        {isIndex ? (
+          <title>Nicholas Oxford</title>
+        ) : (
+          <title>{title ?? 'Nicholas Oxford'}</title>
+        )}
+
         {<meta name='og:image' content={image} />}
         {<meta name='og:title' content={title} />}
         <meta name='og:description' content={description} />
