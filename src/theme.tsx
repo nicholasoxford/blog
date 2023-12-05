@@ -4,8 +4,10 @@ import Link from 'next/link'
 import { processPageMap } from './utils/index'
 const MAX_SIDEBAR_LENGTH = 40
 export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
-  const { title, frontMatter, pageMap, route } = pageOpts
+  let { title, frontMatter, pageMap, route } = pageOpts
   const [headers, tenMostRecentPosts] = processPageMap(pageMap)
+
+  title = title === 'Index' ? 'Software. Be happy' : title
 
   const image =
     frontMatter.image ??
