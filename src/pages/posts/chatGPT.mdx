@@ -7,6 +7,8 @@ tag: typescript AI
 author: Nicholas Oxford
 image: 'https://assets.nicholasoxford.com/music_server_room.webp'
 ---
+import { Callout } from 'nextra/components'
+
     <ins>[Github repo](https://github.com/nicholasoxford/lyricgpt)</ins>
     <br />  
     <br />  
@@ -19,11 +21,11 @@ Create a one page site that uses  OpenAI's `createEmbedding` API and [Supabase](
 When you create a Supabase application, they give you a Postgres database. In a few click you will be able to add an extension that enables you to store the vectors of data you want to search.
 
     <br />  
-This closely follows Sucpbase's tutorial: [Storing OpenAI embeddings in Postgres with pgvector](https://supabase.com/blog/openai-embeddings-postgres-vector). 
+This closely follows Supabase's tutorial: [Storing OpenAI embeddings in Postgres with pgvector](https://supabase.com/blog/openai-embeddings-postgres-vector). 
     <br />  
 
 
-## Create a Supabase project
+## Create and storing embeddings of the song lyrics
 
 After signing up for supabase, create your first project with default settings.
 
@@ -39,14 +41,23 @@ After signing up for supabase, create your first project with default settings.
 
 
 Next we need to click on the terminal icon on the left sidebar. It should say SQL editor. We are going to pass in SQL commands to our supabase datbase.
+    <div className="">
+          <img src="https://assets.nicholasoxford.com/supa-cli.png" alt="terminal" width="600" height="auto" />
+          </div>
+
     <br />  
-The first command we are passing in is going to enable the vector extension:
+
+
+
+Let's enable the [vector extension](https://github.com/pgvector/pgvector):
 
 ```sql 
 create extension vector;
 ```
     <br />
-The next command creates the relevant tables for both the inputs to openai and the vector output.
+
+For this project I grabbed data from [Kaggle](https://www.kaggle.com/datasets/carlosgdcj/genius-song-lyrics-with-language-information). It has song lyrics of 81 artist broken up into folders. 
+The next command creates the the documents tables that will store song information, lyrics, and it's generated embedding. If you want to learn about embedding databases, I found [Cloudflare's blog post](https://www.cloudflare.com/learning/ai/what-are-embeddings/) to be the most helpful.
 
 ```sql 
 create table documents (
@@ -59,7 +70,10 @@ create table documents (
 );
 ```
     <br />
-`match_documents` is a function that will take in a query embedding and return the most similar documents. We will use this function to search for songs.
+Creating a Supabase application means you are standing up an impressive amount of infastructure, most importantly, a Postgres database. Supabase's superpower is they take the Postgres database and turn it into a platofrm for to build applications on top. Most impressively they do this all open source and by focusing on Postgres fundamentals. If you get really into Supabase, you are getting really into Postgres. It's a win, win.
+
+    <br />
+Here we are going to create a [Postgres Function](https://www.postgresql.org/docs/current/sql-createfunction.html). `match_documents` is a function that will take in a query embedding and return the most similar documents. We will use this function to search for songs.
 
 ```sql
 create or replace function match_documents (
@@ -96,17 +110,34 @@ $$;
 
 Thinking about perfomance, lets add an index:
 
-```sql
+```sql 
 create index on documents
 using ivfflat (embedding vector_cosine_ops)
 with (lists = 100);
 ```
       <br />
+Run create-next-app to get a folder with a nextjs app. Open that folder in your favorite code editor.
 
-Now in our vercel app we are going to write a function to generate the embeddings.
+```bash 
+bunx create-next-app@latest --typescript --tailwind --eslint --src-dir --use-bun --app --import-alias='@/*' lyric-gpt
+```
+
+Don't have bun? [Install instructions](https://bun.sh/docs/installation)
+  
+      <br />
+Download the [Rap Genius Lyrics Set](https://www.kaggle.com/datasets/carlosgdcj/genius-song-lyrics-with-language-information) and store it in a folder inside your next project called `rawdata`. I used the first 10 folders. You can use more or less. 
+
+    <br />  
+
+
+Because I think we might want to call this code in the future, we should make an `/api` route for creating vector embeddings. This function is somewhat specifc to the structure of the rap genius data set, but I think it could be easily modified for other datasets.
 It will first parse the folder `/rawData` for filepaths and then read the csv files.
 We then batch 10 songs at a time and send them to openai to generate the embeddings.
-We also check to see if the song already exist in the database
+    <br />
+We are sending a somewhat dumb way of generating embeddings. We are combining the artist, title, and lyrics into one string. This is not ideal, but it works. I think a better way would be to break up the lyrics into chunks and generate embeddings for each chunk. This would allow us to search for a specific part of a song. 
+    <br />
+
+    Once we get the embeddings back from openai, we insert them into our database. We are using supabase's [javascript client](https://supabase.io/docs/reference/javascript/insert) to insert the data.
 
 ```ts filename="app/api/generateEmbeddings/routes.ts"
 import * as fs from "fs";
@@ -344,6 +375,13 @@ To make sure you have all the correct dependencies, here is my `package.json`
   }
 }
 ```
+
+    <br />
+
+
+    ## Creating the frontend
+
+    
 
 ## Conclusion
 
