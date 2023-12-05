@@ -7,7 +7,7 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
   let { title, frontMatter, pageMap, route } = pageOpts
   const [headers, tenMostRecentPosts] = processPageMap(pageMap)
   let isIndex = route === '/'
-
+  title = title === 'Index' ? 'Software. Be happy' : title
   const image =
     frontMatter.image ??
     'https://assets.nicholasoxford.com/Big_Sky_Resort_Winter.webp'
