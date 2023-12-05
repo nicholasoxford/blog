@@ -1,24 +1,24 @@
 import type { NextraThemeLayoutProps } from 'nextra'
 import Head from 'next/head'
 import Link from 'next/link'
-import { processPageMap } from './utils/index'
+import { generatePostPageHeading, processPageMap } from './utils/index'
 const MAX_SIDEBAR_LENGTH = 40
 export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
-  let { title, frontMatter, pageMap, route } = pageOpts
-  const [headers, tenMostRecentPosts] = processPageMap(pageMap)
-  let isIndex = route === '/'
-  title = title === 'Index' ? 'Software. Be happy' : title
-  const image =
-    frontMatter.image ??
-    'https://assets.nicholasoxford.com/Big_Sky_Resort_Winter.webp'
-  const description = frontMatter.description ?? 'Software. Be happy '
+  // Get the pages metadata
+  const {
+    headers,
+    tenMostRecentPosts,
+    description,
+    isIndex,
+    title,
+    image,
+    route,
+  } = processPageMap(pageOpts)
 
-  const backgroundStyle = {
-    backgroundImage: route.includes('/posts/') ? `url(${image})` : '',
-    backgroundPosition: 'center',
-    backgroundSize: 'cover',
-    backgroundRepeat: 'no-repeat',
-  }
+  const backgroundStyle = generatePostPageHeading({
+    route,
+    image,
+  })
 
   return (
     <div>
