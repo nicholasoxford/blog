@@ -116,6 +116,10 @@ p > code {
   @apply !px-1 rounded-sm ml-0 my-0;
 }
 
+p > a {
+  @apply !text-blue-700;
+}
+
 pre > code {
   @apply grid;
   counter-reset: line;
