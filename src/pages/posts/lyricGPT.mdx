@@ -157,6 +157,7 @@ const openAi = new OpenAIApi(configuration);
 export async function GET() {
   const lyricPath = await getDocuments();
   for (let i = 0; i < lyricPath.length; i++) {
+    console.log("processing", lyricPath[i])
     let allSongRows: songRow[] = [];
     const path = lyricPath[i];
     const fileContent = fs.readFileSync(path, { encoding: "utf-8" });
@@ -261,7 +262,7 @@ function toFilePath(file: string) {
   return path.join(folderPath, file);
 }
 ```
-
+To run this: `bun run dev` and then go to `localhost:3000/api/generateEmbeddings` in your browser. This will take a while. I think it took me about 30 minutes to run.
     <br />
 
 Now that we have inserted the songs into our database, we can start writing our search function.
@@ -279,14 +280,15 @@ export const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-export async function POST(req: Request) {
+export async function GET(req: Request) {
   // Handle CORS
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
-  // Search query is passed in request payload
-  const { query } = await req.json();
+  // Extract search query from request URL
+  const url = new URL(req.url);
+  const query = url.searchParams.get('query') || '';
   // OpenAI recommends replacing newlines with spaces for best results
   const input = query.replace(/\n/g, " ");
 
@@ -315,7 +317,7 @@ export async function POST(req: Request) {
     }
   );
 
-  //remove duplicates
+  // Remove duplicates
   const uniqueSongs = [...new Set(songs)];
   console.log(uniqueSongs);
 
@@ -331,6 +333,9 @@ export async function POST(req: Request) {
 }
 ```
       <br />
+
+      // make query about hip hop
+      To run this: `bun run dev` and then go to `localhost:3000/api/searchVector?query=happy+hip+hop` in your browser. This will return a json object with the query and the most similar songs.
 
 To make sure you have all the correct dependencies, here is my `package.json`
 
