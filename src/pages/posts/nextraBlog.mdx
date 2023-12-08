@@ -7,18 +7,16 @@ tag: typescript AI
 author: Nicholas Oxford
 ---
 
-Nextra is a great tool for building websites with Next.js and MDX.
+Nextra is a great tool for building websites with Next.js and MDX. However, when I was starting out I felt their like blog theme had too much magic going on. 
+To figure out what the heck is going I decided to create a custom Theme. I've used Nextra for documentation on another project, and the knowledge gained from 
+writing a custom theme made move so much quicker. 
 
-However, I find using their templates to be a bit convulated. When I decided to create
-a theme from scratch, it quickly revelaed how awesome Nextra is. Plus, when / if you go back to
-using a template, you feel like you have nextra super powers.
+In the tutorial we are going to walk through creating a personal blog with Nextra.
+We will go over both `_meta.json`, frontmatter, and auto generating links from the `pageOpts` prop.
 
-In the tutorial we are going to walk through creating a Next.js 13 blog with Nextra.
-We will go over both `_meta.json` and inline metadata and how it builds your navigation.
+Intuitively, most of the heavy lifting for a custom Nextra theme happens in `theme.tsx`.
 
-Lastly we will use tailwind and a `src/theme.tsx` file to customize the look and feel of our blog.
-
-## Create a next 13 app
+## Create a custom Nextra app
 
 When promopted name your project. This command also defaults your next app to `pnpm` and `typescript`.
 
@@ -26,7 +24,7 @@ When promopted name your project. This command also defaults your next app to `p
 npx create-next-app@latest --eslint --src-dir --import-alias --use-pnpm --typescript --tailwind
 ```
 
-When promopted about app directory, response no.
+When promopted about app directory, responsed no.
 
 > You cannot use Nextra with the experimental app directory.
 
