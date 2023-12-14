@@ -3,7 +3,7 @@ title: Converting a Next.js app from react-icons to @react-icons/all-files
 type: post
 date: 2023-11-29
 description: How to convert a Next.js app from react-icons to @react-icons/all-files using regex
-tags: nextjs react
+tags: nextjs, react, react-icons migration, @react-icons/all-files, regex pattern matching, icon library optimization, nextjs performance, code refactoring, javascript development, UI component best practices, Next.js icon loading, JSX icons
 author: Nicholas Oxford
 image: 'https://assets.nicholasoxford.com/factory.webp'
 ---
@@ -19,26 +19,22 @@ import \{ ([a-zA-Z]+) \}[ ]+from[ ']+react-icons/([a-z]+)
 import { $1 } from '@react-icons/all-files/$2/$1
 ```
 
-
-
-
 As your Next.js app grows in complexity, it's good to keep track of what dependencies are having an outsized impact on your bundle size. The Next team has a few [tricks up their sleeve](https://vercel.com/blog/how-we-optimized-package-imports-in-next-js) to reduce client side bundle size. However, in real life you will run into some packages that are MBs in size and you'll need to find a way to reduce their impact on your bundle size.
-        <br />
-The best way to track the impact of each dependency is to use [a Next.js specific Bundle Analyzer](https://www.npmjs.com/package/@next/bundle-analyzer) to see what is contributing to your bundle size. 
-
+                <br />
+The best way to track the impact of each dependency is to use [a Next.js specific Bundle Analyzer](https://www.npmjs.com/package/@next/bundle-analyzer) to see what is contributing to your bundle size.
 
     <div className="w-full flex justify-center items-center my-4">
 
-                <img
-                            src="https://assets.nicholasoxford.com/next-bundle.webp"
-                            alt="Photo"
-                            width="500"
-                            height="500"
-                            style={{ objectFit: 'contain' }}
-                            className="next-image"
-                        />
+                            <img
+                                                        src="https://assets.nicholasoxford.com/next-bundle.webp"
+                                                        alt="Photo"
+                                                        width="500"
+                                                        height="500"
+                                                        style={{ objectFit: 'contain' }}
+                                                        className="next-image"
+                                                />
 
-                    </div>
+                                        </div>
 
 You are able to break this down by page, and beyond that you can quickly knock down some large dependencies with [dynamic imports](https://nextjs.org/docs/pages/building-your-application/optimizing/lazy-loading)
 
@@ -48,25 +44,26 @@ At $WORK we were battling a large `First Load JS Shared By All`, which was clear
 
     <div className="w-full flex justify-center items-center mt-4">
 
-                <img
-                            src="https://assets.nicholasoxford.com/first-load-js.png"
-                            alt="Photo"
-                            width="500"
-                            height="500"
-                            style={{ objectFit: 'contain' }}
-                            className="next-image"
-                        />
+                            <img
+                                                        src="https://assets.nicholasoxford.com/first-load-js.png"
+                                                        alt="Photo"
+                                                        width="500"
+                                                        height="500"
+                                                        style={{ objectFit: 'contain' }}
+                                                        className="next-image"
+                                                />
 
-                    </div>
+                                        </div>
 
 To save you some googling, the problem is react-icons is a legacy monorepo that bundles all of the icons into one package. This means that if you only use one icon, you are still bundling all of the icons. You can try to use every next trick in the book, and you might read that it doesn't happen in `NODE_ENV=production`, but it does...
 
         <br />
+
 Once you learn about all the problems, with `react-icons` you'll find that there is a new package called `@react-icons/all-files` that is a drop in replacement for `react-icons` that allows you to import only the icons you need. It doesn't have the same bundling issues as `react-icons` and it's supposed to be a drop in replacement. The problem is the newest version of `@react-icons/all-files` isn't up to date with the latest version of `react-icons` and it's missing some icons. Oi vey.
 
         <br />
 
-The reason is because the `@react-icons/all-files` package is [reportedly too large to upload to npm](https://github.com/react-icons/react-icons/issues/593#issuecomment-1233711489). An obvious solution would be to try to off ramp from react-icons all together but I found that easier said than done, it's convienent! 
+The reason is because the `@react-icons/all-files` package is [reportedly too large to upload to npm](https://github.com/react-icons/react-icons/issues/593#issuecomment-1233711489). An obvious solution would be to try to off ramp from react-icons all together but I found that easier said than done, it's convienent!
 
         <br />
 
@@ -82,7 +79,7 @@ The only solution I have found is installing `@react-icons/all-files` by linking
 
         <br />
 
-        This seems to dramatically increase install times, but if reducing bundle size is your ultimate goal, than it is worth it. 
+        This seems to dramatically increase install times, but if reducing bundle size is your ultimate goal, than it is worth it.
 
         ## Using regex to quickly convert your app
 
@@ -109,13 +106,13 @@ The only solution I have found is installing `@react-icons/all-files` by linking
 
     <div className="w-full flex justify-center items-center mt-4">
 
-                <img
-                            src="https://assets.nicholasoxford.com/js-bundle-size-end.png"
-                            alt="Photo"
-                            width="500"
-                            height="500"
-                            style={{ objectFit: 'contain' }}
-                            className="next-image"
-                        />
+                            <img
+                                                        src="https://assets.nicholasoxford.com/js-bundle-size-end.png"
+                                                        alt="Photo"
+                                                        width="500"
+                                                        height="500"
+                                                        style={{ objectFit: 'contain' }}
+                                                        className="next-image"
+                                                />
 
-                    </div>
+                                        </div>
