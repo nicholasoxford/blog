@@ -1,0 +1,300 @@
+---
+title: Checkng USDC Balance on Solana using Cloudflare Workers
+type: post
+date: 2023-12-15
+description: A simple Cloudflare Worker to check the balance of a USDC wallet on Solana
+tag: Solana, USDC Wallet, Cloudflare Workers, Blockchain Technology, Cryptocurrency, Solana Network, Decentralized Finance, Web3 Development, API Integration, Fintech, Smart Contracts, Digital Wallets, Crypto Wallet Balance, Blockchain Programming, Cloud Computing
+author: Nicholas Oxford
+image: 'https://assets.nicholasoxford.com/usdc-check.webp'
+---
+## Solana RPC, Cloudflare Workers, and building Perfomant Web3 Applications
+<br/>
+When building a solana application, you often need to programmatically check the USDC balance of a wallet. This is a simple Cloudflare Worker that will check the balance of a USDC wallet on Solana, mainnet or devnet. 
+<br/>
+Recently, RPC like [Helius](https://helius.xyz/) have introduced RPC endpoints that can be called clientside. However, for most operations you want to use your general purpose endpoints, which include an API key that can't be revealed clientside. 
+> This SecureRPC URL hides your API key and is limited to 5 tps per IP. This is ideal for using in frontend applications where you don’t want to worry about leaking your API key
+
+Solana developers need to be in the mindset of delivering exceptional consumer experiences. This means building applications that are fast, responsive, and reliable. Cloudflare Workers are a great way to build performant web3 applications. In some instances, `@solana/web3.js` can be replaced completely with a few fetch calls. 
+
+Follow [Cloudflare's guide on getting started with Workers](https://developers.cloudflare.com/workers/get-started/guide/) 
+
+```ts
+export default {
+	async fetch(request, env, ctx) {
+		return new Response('Hello World!');
+	},
+};
+```
+
+The first we need to do is add CORS headers to our response. This will allow us to call our worker from any domain. 
+
+```ts
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Headers': '*',
+}
+export default {
+	async fetch(request, env, ctx) {
+        const json = JSON.stringify({ message: 'Hello World!' })
+		return new Response(json, headers: {
+        'content-type': 'application/json;charset=UTF-8',
+        ...corsHeaders,
+      },);
+	},
+};
+```
+For now we are just going to handle Solana mainnet. We need to add `@solana/web3.js` as a dependency. 
+<br/>
+
+We are also going to parse the request URL to get the wallet address, and check if its a valid Public Key.
+
+After confirming the wallet address is valid we are going to call `getAssociatedTokenAddress()`
+
+> We need to call getAssociatedTokenAddress() because USDC is an SPL token. This means that the USDC token is not stored in the wallet address, but in an associated token address owned by the wallet. Besides Solana tokens, this is generally how Solana works.
+
+```ts
+export default {
+// get walletPubkey from url
+const url = new URL(request.url)
+const walletAddress = url.searchParams.get('walletAddress')
+if (!walletAddress) {
+    return new Response('walletAddress is required', {
+    status: 400,
+    })
+}
+
+const walletPubkey = parsePublicKey(walletAddress)
+const SOLANA_USD_COIN_ADDRESS_MAINNET: new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")
+const USDC_ASSOCIATED_TOKEN_ACCOUNT = await getAssociatedTokenAddress(
+        USDC_MINT_PK,
+        walletPubkey,
+    ).catch((err) => {
+        console.error(err)
+        return null
+    })
+
+// If no USDC token account exist, that means the wallet USDC balance is 0
+ if (!USDC_ASSOCIATED_TOKEN_ACCOUNT) {
+     return zeroAmountResponse() 
+    }
+
+    const json = JSON.stringify({ message: 'Hello World!' })
+    return new Response(json, headers: {
+    'content-type': 'application/json;charset=UTF-8',
+    ...corsHeaders,
+    },);
+}
+const zeroAmountResponse = (): Response => {
+  const json = JSON.stringify({ amount: 0 }, null, 2);
+  return new Response(json, {
+    headers: {
+      'content-type': 'application/json;charset=UTF-8',
+      ...corsHeaders,
+    },
+  });
+};
+
+// public key or error
+function parsePublicKey(walletAddress) {
+    try {
+        new PublicKey(walletAddress)
+    } catch (err) {
+        return new Response('walletAddress is not a valid public key', {
+        status: 400,
+    })
+}
+}
+```
+
+So far we have a worker that takes in a wallet address, calculates the associated token address, and return zero if one doesn't exist.
+<br />
+
+Now we need to call the Solana RPC to get the USDC balance of the associated token address. 
+
+```ts
+const fetchRes = await fetch(env.RPC_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'getTokenAccountBalance',
+        params: [
+          USDC_ASSOCIATED_TOKEN_ACCOUNT.toString(),
+          {
+            commitment: 'confirmed',
+          },
+        ],
+      }),
+    })
+```
+
+Nowe we need to add an enviroment variable for an RPC url. Getting started by opening your `wrangler.toml` file and adding the following. 
+
+```toml
+[vars]
+RPC_URL = "example.com"
+```
+
+Then add to your `env.d.ts` file
+
+```ts
+/// <reference types="@cloudflare/workers-types" />
+
+interface Env {
+
+  RPC_URL: string
+}
+```
+
+Now we can add the RPC url to our worker. 
+
+```ts
+const fetchRes = await fetch(env.RPC_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'getTokenAccountBalance',
+        params: [
+          USDC_ASSOCIATED_TOKEN_ACCOUNT.toString(),
+          {
+            commitment: 'confirmed',
+          },
+        ],
+      }),
+    })
+```
+We now need to handle the response, and return the amount. If we get a 404, we return zero. If we get a 200, we return the amount. 
+<br/>
+Furthermore, in the full example you will see that we are also handling if we are calling the devnet or mainnet RPC. Another joy of Solana is that the devnet and mainnet USDC mints are different. 
+<br/>
+
+We also added another env variable if it is production or not. I have found deploying a USDC endpoint under a `dev.example.com` subdomain and a `prod.example.com` subdomain to be the best way to handle this. 
+
+```ts
+export default {
+// get walletPubkey from url
+const url = new URL(request.url)
+const walletAddress = url.searchParams.get('walletAddress')
+if (!walletAddress) {
+    return new Response('walletAddress is required', {
+    status: 400,
+    })
+}
+
+const walletPubkey = parsePublicKey(walletAddress)
+ // Get USDC Mint Account
+const USDC_MINT = !env.isProduction
+    ? SOLANA_USD_COIN_ADDRESS_DEVNET
+    : SOLANA_USD_COIN_ADDRESS_MAINNET
+const USDC_ASSOCIATED_TOKEN_ACCOUNT = await getAssociatedTokenAddress(
+        USDC_MINT,
+        walletPubkey,
+    ).catch((err) => {
+        console.error(err)
+        return null
+    })
+
+// If no USDC token account exist, that means the wallet USDC balance is 0
+ if (!USDC_ASSOCIATED_TOKEN_ACCOUNT) {
+     return zeroAmountResponse() 
+    }
+
+    const fetchRes = await fetch(env.RPC_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'getTokenAccountBalance',
+        params: [
+          USDC_ASSOCIATED_TOKEN_ACCOUNT.toString(),
+          {
+            commitment: 'confirmed',
+          },
+        ],
+      }),
+    })
+
+    if (!fetchRes.ok) {
+        return zeroAmountResponse()
+        }
+    
+    const { result } = (await fetchRes.json()) as {
+      result: { value: { amount: number } }
+    }
+    if (!result?.value.amount) {
+        return zeroAmountResponse()
+    }
+    const amount = Number(result.value.amount / 1000000)
+    const json = JSON.stringify(
+      {
+        amount,
+      },
+      null,
+      2,
+    )
+
+    return new Response(json, {
+      headers: {
+        'content-type': 'application/json;charset=UTF-8',
+        ...corsHeaders,
+      },
+    })
+}
+const zeroAmountResponse = (): Response => {
+  const json = JSON.stringify({ amount: 0 }, null, 2);
+  return new Response(json, {
+    headers: {
+      'content-type': 'application/json;charset=UTF-8',
+      ...corsHeaders,
+    },
+  });
+};
+
+// public key or error
+function parsePublicKey(walletAddress) {
+    try {
+        new PublicKey(walletAddress)
+    } catch (err) {
+        return new Response('walletAddress is not a valid public key', {
+        status: 400,
+    })
+}
+
+const SOLANA_USD_COIN_ADDRESS_MAINNET =
+  new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
+const SOLANA_USD_COIN_ADDRESS_DEVNET =
+  new PublicKey('4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU')
+}
+```
+
+Now lets deploy a development and production version of our worker. 
+
+```bash
+wrangler publish --env production 
+wrangler publish --env dev
+```
+Now we need to publish our env variables. 
+
+```bash
+wrangler secret put RPC_URL --env production
+wrangler secret put RPC_URL --env dev
+```
+
+Grab the URL from the worker and test it out. 
+
+```bash
+curl https://usdc.example.xyz/?walletAddress=2QKJYeU7UiF7ZeaEGT1sggpSnFqrkEqGKbQv5h8FQNgs
+```
+
+

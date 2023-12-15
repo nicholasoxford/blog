@@ -102,6 +102,22 @@ a:hover,
   /* Smooth transition for color change */
 }
 
+blockquote {
+  background: #282c34; /* Dark background for blockquote */
+  border-left: 4px solid #282c34; /* A pop of color for the border */
+  color: #abb2bf; /* Lighter text color for dark background */
+  padding: 0.5em 1em; /* Spacing inside the blockquote */
+  margin: 1em 0; /* Space above and below the blockquote */
+  font-style: normal; /* Keep it standard to contrast the italic in the main text */
+  @apply rounded-lg shadow-md; /* Rounded corners and a subtle shadow for depth */
+}
+
+blockquote > p {
+  @apply !text-base !leading-relaxed; /* Comfortable text size and line spacing */
+  color: #abb2bf; /* Matching text color for readability */
+  margin-bottom: 0; /* No extra space at the bottom */
+}
+
 pre {
   background: #1f2028;
   @apply !px-0 rounded-lg;
