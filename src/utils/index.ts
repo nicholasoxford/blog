@@ -42,7 +42,9 @@ export const processPageMap = (
   const tenMostRecentPosts: Post[] = pageOpts.pageMap
     .flatMap(extractPosts)
     .slice(0, 10)
-  const description = pageOpts.frontMatter.description ?? 'Software. Be happy '
+  const description =
+    pageOpts.frontMatter.description ??
+    'A personal blog for Nicholas Oxford about software and life in Montana. '
   let isIndex = pageOpts.route === '/'
   const title = isIndex ? 'Software. Be happy' : pageOpts.title
   const image =
