@@ -8,17 +8,6 @@ author: Nicholas Oxford
 image: 'https://assets.nicholasoxford.com/factory.webp'
 ---
 
-**TLDR:**
-
-```json
-"@react-icons/all-files": "https://github.com/react-icons/react-icons/releases/download/v4.11.0/react-icons-all-files-4.11.0.tgz",
-```
-
-```
-import \{ ([a-zA-Z]+) \}[ ]+from[ ']+react-icons/([a-z]+)
-import { $1 } from '@react-icons/all-files/$2/$1
-```
-
 As your Next.js app grows in complexity, it's good to keep track of what dependencies are having an outsized impact on your bundle size. The Next team has a few [tricks up their sleeve](https://vercel.com/blog/how-we-optimized-package-imports-in-next-js) to reduce client side bundle size. However, in real life you will run into some packages that are MBs in size and you'll need to find a way to reduce their impact on your bundle size.
                 <br />
 The best way to track the impact of each dependency is to use [a Next.js specific Bundle Analyzer](https://www.npmjs.com/package/@next/bundle-analyzer) to see what is contributing to your bundle size.
