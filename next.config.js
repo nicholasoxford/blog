@@ -1,5 +1,6 @@
 const { readFileSync } = require('fs')
 const withNextra = require('nextra')({
+  output: 'export',
   theme: './src/theme.tsx',
   mdxOptions: {
     rehypePrettyCodeOptions: {
