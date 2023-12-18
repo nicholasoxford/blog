@@ -1,6 +1,7 @@
 const { readFileSync } = require('fs')
 const withNextra = require('nextra')({
   output: 'export',
+  unstable_staticImage: false,
   theme: './src/theme.tsx',
   mdxOptions: {
     rehypePrettyCodeOptions: {
@@ -12,8 +13,4 @@ const withNextra = require('nextra')({
   },
 })
 
-module.exports = withNextra({
-  images: {
-    domains: ['assets.nicholasoxford.com'],
-  },
-})
+module.exports = withNextra({})
