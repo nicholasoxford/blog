@@ -48,6 +48,7 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
         <div className='w-full flex-row justify-center align-middle md:flex md:h-screen md:w-1/4 md:flex-col md:text-right'>
           <div className='mt-2 text-lg  md:mt-8'>
             <Link
+              prefetch={false}
               href='/'
               style={{
                 fontVariationSettings: ` 'wght' 850`,
@@ -59,6 +60,7 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
           <div className='flex w-full items-start justify-start overflow-auto px-0 md:flex-col md:items-center'>
             {headers.map((header, index) => (
               <Link
+                prefetch={false}
                 className='w-full  text-lg font-extrabold md:text-right'
                 key={index}
                 href={`${[Object.keys(header)[0]]}`}
@@ -70,6 +72,7 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
               <hr className='my-2 h-px w-48 border-0 bg-gray-200 dark:bg-gray-700 ' />
               {tenMostRecentPosts.map((post, postIndex) => (
                 <Link
+                  prefetch={false}
                   className='font-light  '
                   key={postIndex}
                   href={`${post.route}`}
