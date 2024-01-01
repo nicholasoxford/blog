@@ -22,6 +22,7 @@ export const extractPosts = (page: any): Post[] =>
         .map((post: any) => ({
           title: post.frontMatter.title,
           route: post.route,
+          date: post.frontMatter.date,
         }))
     : []
 
@@ -42,6 +43,9 @@ export const processPageMap = (
   const tenMostRecentPosts: Post[] = pageOpts.pageMap
     .flatMap(extractPosts)
     .slice(0, 10)
+    .sort((a, b) => {
+      return new Date(b.date).getTime() - new Date(a.date).getTime()
+    })
   const description =
     pageOpts.frontMatter.description ??
     'A personal blog for Nicholas Oxford about software and life in Montana. '

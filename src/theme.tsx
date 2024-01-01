@@ -2,7 +2,7 @@ import type { NextraThemeLayoutProps } from 'nextra'
 import Head from 'next/head'
 import Link from 'next/link'
 import { generatePostPageHeading, processPageMap } from './utils/index'
-const MAX_SIDEBAR_LENGTH = 40
+const MAX_SIDEBAR_LENGTH = 35
 export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
   // Get the pages metadata
   const {
