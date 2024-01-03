@@ -48,7 +48,6 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
       </Head>
 
       <div className=' flex w-full flex-col justify-center md:flex-row md:space-x-4  '>
-        <SpeedInsights />
         <div className='w-full flex-row justify-center align-middle md:flex md:h-screen md:w-1/4 md:flex-col md:text-right'>
           <div className='mt-2 text-lg  md:mt-8'>
             <Link
@@ -107,6 +106,7 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
             {children}
           </div>
         </div>
+        <SpeedInsights />
       </div>
     </div>
   )
