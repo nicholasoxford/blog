@@ -2,6 +2,8 @@ import type { NextraThemeLayoutProps } from 'nextra'
 import Head from 'next/head'
 import Link from 'next/link'
 import { generatePostPageHeading, processPageMap } from './utils/index'
+import { SpeedInsights } from '@vercel/speed-insights/next'
+
 const MAX_SIDEBAR_LENGTH = 35
 export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
   // Get the pages metadata
@@ -44,7 +46,9 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
         <meta name='twitter:description' content={description} />
         {<meta name='twitter:image' content={image} />}
       </Head>
+
       <div className=' flex w-full flex-col justify-center md:flex-row md:space-x-4  '>
+        <SpeedInsights />
         <div className='w-full flex-row justify-center align-middle md:flex md:h-screen md:w-1/4 md:flex-col md:text-right'>
           <div className='mt-2 text-lg  md:mt-8'>
             <Link
