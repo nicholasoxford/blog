@@ -1,0 +1,57 @@
+---
+title: "Turning Youtube videos into instagram reels in two commands"
+type: post
+date: 2024-01-04
+description: "How to turn youtube videos into instagram reels in two commands using FFMPEG and yt-dlp"
+tags: ffmpeg, yt-dlp, youtube, instagram, reels
+author: Nicholas Oxford
+image: 'https://assets.nicholasoxford.com/ski-tube.webp'
+---
+
+After installing [yt-dlp](https://github.com/yt-dlp/yt-dlp) and [ffmpeg](https://ffmpeg.org/) you can run the following command to download a youtube video and convert it to an instagram reel.
+
+```bash
+yt-dlp -o ski.webm https://www.youtube.com/watch?v=XKnz65lTHPM&ab_channel=RedBullSnow
+```
+
+and then
+
+```bash
+ffmpeg -i ski.webm -ss 00:01:25 -to 00:02:30 -filter_complex "[0:v]crop=1080:1920:(iw-1080)/2:(ih-1920)/2[v]" -map "[v]" -map "0:a?" -c:v libx264 -c:a copy output.mp4
+```
+
+The first command, yt-dlp, is a modern and updated version of `youtube-dl`. You suppodely can do features like grab specific timestamps of the a youtube video, but I also read it can take longer than just downloading the whole video. I tried to use youtube-dl but it was downloading videos painfully slow.
+
+<br/>
+The second command is your typical ffmpeg command. We are taking an input: 
+```bash
+-i ski.webm
+```
+ and then we are specifying a start time: 
+```bash
+-ss 00:01:25
+``` 
+ and an end time: 
+ ```bash
+ -to 00:02:30
+ ```
+  We are then cropping the video to be 1080x1920: 
+  ```bash
+  -filter_complex "[0:v]crop=1080:1920:(iw-1080)/2:(ih-1920)/2[v]"
+  ```
+  . We are then mapping the video and audio: 
+  ```bash
+  -map "[v]" -map "0:a?"
+  ```
+   We are then specifying the video codec: 
+   ```bash
+   -c:v libx264
+   ``` 
+   and the audio codec: 
+   ```bash
+   -c:a copy
+   ```
+   And finally we are specifying the output file: 
+   ```bash
+   output.mp4
+   ```
