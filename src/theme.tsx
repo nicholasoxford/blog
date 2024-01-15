@@ -3,6 +3,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { generatePostPageHeading, processPageMap } from './utils/index'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import { Analytics } from '@vercel/analytics/react'
 
 const MAX_SIDEBAR_LENGTH = 35
 export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
@@ -107,6 +108,7 @@ export default function Layout({ children, pageOpts }: NextraThemeLayoutProps) {
           </div>
         </div>
         <SpeedInsights />
+        <Analytics />
       </div>
     </div>
   )
