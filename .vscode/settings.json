@@ -9,5 +9,9 @@
     "editor.defaultFormatter": "unifiedjs.vscode-mdx"
   },
   "workbench.preferredDarkColorTheme": "Palenight (Mild Contrast)",
-  "workbench.colorTheme": "Palenight Italic"
+  "workbench.colorTheme": "Palenight Italic",
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.inlineSuggest.enabled": false
 }
